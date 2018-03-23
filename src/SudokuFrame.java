@@ -71,15 +71,40 @@ public class SudokuFrame extends JFrame {
 	
 	private class NumberSelectionGrid extends JComponent {
 		public int[] lastSelected;
-		private JToggleButton[][] numberSelections;
+		private NumberSelection[][] numberSelections;
 		
 		public NumberSelectionGrid(JPanel numberSelectionPanel) {
-			numberSelections = new JToggleButton[SudokuModel.SQUARES][SudokuModel.SQUARES];
+			numberSelections = new NumberSelection[SudokuModel.SQUARES][SudokuModel.SQUARES];
 			for(int r = 0; r < SudokuModel.SQUARES; r++) {
 				for(int c = 0; c < SudokuModel.SQUARES; c++) {
-					numberSelections[r][c] = new JToggleButton("" + (r*SudokuModel.SQUARES + c + 1));
+					numberSelections[r][c] = new NumberSelection(r, c);
 					numberSelectionPanel.add(numberSelections[r][c]);
 				}
+			}
+		}
+		
+		private class NumberSelection extends JButton {
+			private final Color UNSELECTED = Color.WHITE;
+			private final Color SELECTED = Color.GREEN;
+			
+			public NumberSelection(int row, int col) {
+				setText("" + (row*SudokuModel.SQUARES + col + 1));
+				setBackground(UNSELECTED);
+				addActionListener(e -> {
+					if(lastSelected != null) {
+						if(lastSelected[0] == row && lastSelected[1] == col) { //unselect this button
+							setBackground(UNSELECTED);
+							lastSelected = null;
+						} else { //unselect another and select this
+							numberSelections[lastSelected[0]][lastSelected[1]].setBackground(UNSELECTED);
+							setBackground(SELECTED);
+							lastSelected = new int[] {row, col};
+						}
+					} else {
+						setBackground(SELECTED);
+						lastSelected = new int[] {row, col};
+					}
+				});
 			}
 		}
 	}
