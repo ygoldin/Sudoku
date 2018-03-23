@@ -43,7 +43,13 @@ public class SudokuFrame extends JFrame {
 			sudokuModel = new SudokuModel(0);
 			for(int r = 0; r < SudokuModel.GRID_SIZE; r++) {
 				for(int c = 0; c < SudokuModel.GRID_SIZE; c++) {
-					mainGridButtons[r][c].setText(null);
+					int initialValue = sudokuModel.initialSetup().get(r).get(c);
+					if(initialValue != 0) {
+						mainGridButtons[r][c].setText("" + initialValue);
+						mainGridButtons[r][c].setRolloverEnabled(false);
+					} else {
+						mainGridButtons[r][c].setText(null);
+					}
 				}
 			}
 		}
