@@ -25,9 +25,22 @@ public class SudokuModel {
 	}
 	
 	public boolean safeToPlace(int row, int col, int num) {
-		if(!inBounds(row, col) || num < 1 || num > GRID_SIZE) {
+		if(!inBounds(row, col) || !validNumber(num)) {
 			throw new IllegalArgumentException("invalid params");
 		}
+		return safeToPlaceHorizontally(row, num) || safeToPlaceVertically(col, num) || 
+				safeToPlaceWithinSquare((row/SQUARES)*SQUARES, (col/SQUARES)*SQUARES, num);
+	}
+	
+	private boolean safeToPlaceHorizontally(int row, int num) {
+		return false;
+	}
+	
+	private boolean safeToPlaceVertically(int col, int num) {
+		return false;
+	}
+	
+	private boolean safeToPlaceWithinSquare(int topLeftRow, int topLeftCol, int num) {
 		return false;
 	}
 	
@@ -35,7 +48,28 @@ public class SudokuModel {
 		return false;
 	}
 	
+	private boolean validNumber(int num) {
+		return num < 1 || num > GRID_SIZE;
+	}
+	
 	public void place(int row, int col, int num) {
-		
+		if(!safeToPlace(row, col, num)) {
+			throw new IllegalArgumentException("not safe to place");
+		}
+		filledPanels++;
+	}
+	
+	public void remove(int row, int col) {
+		if(!inBounds(row, col)) {
+			throw new IllegalArgumentException("invalid params");
+		} else if(board[row][col] == 0) {
+			throw new IllegalArgumentException("no number here");
+		}
+		board[row][col] = 0;
+		filledPanels--;
+	}
+	
+	public boolean gameOver() {
+		return filledPanels == GRID_SIZE*GRID_SIZE;
 	}
 }
