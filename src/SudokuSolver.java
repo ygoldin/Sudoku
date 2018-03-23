@@ -6,6 +6,17 @@ public class SudokuSolver {
 	public SudokuModel model;
 	
 	/**
+	 * creates a solver over a board of the given difficulty
+	 * 
+	 * @param difficulty The level of difficulty desired (higher number -> higher difficulty)
+	 * @throws IllegalArgumentException if 'difficulty' is not in the range [0, HIGHEST_DIFFICULTY]
+	 * inclusive of the SudokuModel class
+	 */
+	public SudokuSolver(int difficulty) {
+		model = new SudokuModel(difficulty);
+	}
+	
+	/**
 	 * creates a solver over the given model (NOTE: 'model' parameter will not be altered)
 	 * @param model The model to solve
 	 */
