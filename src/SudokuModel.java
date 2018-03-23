@@ -124,14 +124,20 @@ public class SudokuModel {
 		return true;
 	}
 	
-	//returns if the given spot is in bounds
-	private boolean inBounds(int row, int col) {
+	/**
+	 * checks if the given spot is in bounds in the grid
+	 * 
+	 * @param row The row of the spot
+	 * @param col The column of the spot
+	 * @return true if the spot is in bounds, false otherwise
+	 */
+	public boolean inBounds(int row, int col) {
 		return row >= 0 && row < GRID_SIZE && col >= 0 && col < GRID_SIZE;
 	}
 	
 	//returns if the number is valid (1-9)
 	private boolean validNumber(int num) {
-		return num < 1 || num > GRID_SIZE;
+		return num < SMALLEST_NUMBER || num > HIGHEST_NUMBER;
 	}
 	
 	/**
