@@ -10,7 +10,8 @@ public class SudokuFrame extends JFrame {
 	private SudokuModel sudokuModel;
 	private MainGridButton[][] mainGridButtons;
 	private NumberSelectionGrid numberSelectionGrid;
-	private Color[] GAME_COLORS = {Color.BLUE, Color.RED};
+	private JButton help;
+	private static final Color[] GAME_COLORS = {Color.BLUE, Color.RED};
 	
 	public SudokuFrame() {
 		super();
@@ -34,6 +35,19 @@ public class SudokuFrame extends JFrame {
 		numberSelectionPanel.setLayout(new GridLayout(SudokuModel.SQUARES, SudokuModel.SQUARES));
 		numberSelectionGrid = new NumberSelectionGrid(numberSelectionPanel);
 		add(numberSelectionPanel, BorderLayout.SOUTH);
+		
+		JMenuBar menu = new JMenuBar();
+		setJMenuBar(menu);
+		help = new JButton("Help");
+		menu.add(help);
+		help.addActionListener(e -> {
+			String message = "Click on a number in the bottom grid to select it\n";
+			message += "Then click on a square in the main grid to place the number there\n";
+			message += "Numbers that were legally placed show up blue, illegal ones show up red\n";
+			message += "To remove a number from a square, have no number in the bottom grid selected";
+			message += " and click on the square";
+			JOptionPane.showMessageDialog(this, message);
+		});
 	}
 	
 	private void gameOverActions() {
