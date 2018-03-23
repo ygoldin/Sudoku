@@ -33,7 +33,7 @@ public class SudokuSolver {
 	
 	//uses recursive backtracking to attempt every move
 	private void solve(int row, int col) {
-		if(model.inBounds(row, col)) {
+		if(!model.gameOver() && model.inBounds(row, col)) {
 			int[] nextSpot = nextSpot(row, col);
 			if(model.spotFilled(row, col)) {
 				solve(nextSpot[0], nextSpot[1]);
@@ -42,7 +42,9 @@ public class SudokuSolver {
 					if(model.safeToPlace(row, col, i)) {
 						model.place(row, col, i);
 						solve(nextSpot[0], nextSpot[1]);
-						model.remove(row, col);
+						if(!model.gameOver()) {
+							model.remove(row, col);
+						}
 					}
 				}
 			}

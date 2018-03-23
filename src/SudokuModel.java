@@ -99,9 +99,9 @@ public class SudokuModel {
 		if(!validNumber(num)) {
 			throw new IllegalArgumentException("invalid number to place");
 		}
-		return !spotFilled(row, col) && (safeToPlaceHorizontally(row, num)
-				|| safeToPlaceVertically(col, num) 
-				|| safeToPlaceWithinSquare((row/SQUARES)*SQUARES, (col/SQUARES)*SQUARES, num));
+		return !spotFilled(row, col) && safeToPlaceHorizontally(row, num)
+				&& safeToPlaceVertically(col, num) 
+				&& safeToPlaceWithinSquare((row/SQUARES)*SQUARES, (col/SQUARES)*SQUARES, num);
 	}
 	
 	//checks if the number can be placed in that row
