@@ -29,8 +29,16 @@ public class SudokuFrame extends JFrame {
 	}
 	
 	private class MainGridButton extends JButton {
+		private static final int FONT_SIZE = 40;
+		private static final String FONT_NAME = "Arial";
+		
 		public MainGridButton(int row, int col) {
-			
+			int value = sudokuModel.initialSetup().get(row).get(col);
+			if(value != 0) {
+				setText("" + value);
+				setEnabled(false);
+			}
+			setFont(new Font(FONT_NAME, Font.PLAIN, FONT_SIZE));
 		}
 	}
 }
