@@ -221,9 +221,9 @@ public class SudokuModel {
 	public String toString() {
 		String result = "";
 		for(int r = 0; r < GRID_SIZE; r++) {
-			result += "[" + board[r][0];
+			result += "[" + numberRepresentation(board[r][0]);
 			for(int c = 1; c < GRID_SIZE; c++) {
-				result += ", " + board[r][c];
+				result += ", " + numberRepresentation(board[r][c]);
 			}
 			result += "]";
 			if(r != GRID_SIZE - 1) {
@@ -231,5 +231,13 @@ public class SudokuModel {
 			}
 		}
 		return result;
+	}
+	
+	//returns the representation based on if the number is "empty"
+	private String numberRepresentation(int num) {
+		if(num == 0) {
+			return " ";
+		}
+		return "" + num;
 	}
 }
