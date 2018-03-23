@@ -60,6 +60,20 @@ public class SudokuModel {
 	}
 	
 	/**
+	 * checks if the spot has already been filled
+	 * 
+	 * @param row The row of the spot
+	 * @param col The column of the spot
+	 * @return true if there is a number in that spot, false otherwise
+	 */
+	public boolean spotFilled(int row, int col) {
+		if(!inBounds(row, col)) {
+			throw new IllegalArgumentException("out of bounds");
+		}
+		return board[row][col] != 0;
+	}
+	
+	/**
 	 * checks whether the given number can be placed in the given spot
 	 * 
 	 * @param row The row of the spot
@@ -70,10 +84,11 @@ public class SudokuModel {
 	 * [SMALLEST_NUMBER, HIGHEST_NUMBER] inclusive
 	 */
 	public boolean safeToPlace(int row, int col, int num) {
-		if(!inBounds(row, col) || !validNumber(num)) {
-			throw new IllegalArgumentException("invalid params");
+		if(!validNumber(num)) {
+			throw new IllegalArgumentException("invalid number to place");
 		}
-		return board[row][col] == 0 && (safeToPlaceHorizontally(row, num) || safeToPlaceVertically(col, num) 
+		return !spotFilled(row, col) && (safeToPlaceHorizontally(row, num)
+				|| safeToPlaceVertically(col, num) 
 				|| safeToPlaceWithinSquare((row/SQUARES)*SQUARES, (col/SQUARES)*SQUARES, num));
 	}
 	
