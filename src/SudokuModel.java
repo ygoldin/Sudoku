@@ -33,19 +33,36 @@ public class SudokuModel {
 	}
 	
 	private boolean safeToPlaceHorizontally(int row, int num) {
-		return false;
+		for(int c = 0; c < GRID_SIZE; c++) {
+			if(board[row][c] == num) {
+				return false;
+			}
+		}
+		return true;
 	}
 	
 	private boolean safeToPlaceVertically(int col, int num) {
-		return false;
+		for(int r = 0; r < GRID_SIZE; r++) {
+			if(board[r][col] == num) {
+				return false;
+			}
+		}
+		return true;
 	}
 	
 	private boolean safeToPlaceWithinSquare(int topLeftRow, int topLeftCol, int num) {
-		return false;
+		for(int r = topLeftRow; r < topLeftRow + SQUARES; r++) {
+			for(int c = topLeftCol; c < topLeftCol + SQUARES; c++) {
+				if(board[r][c] == num) {
+					return false;
+				}
+			}
+		}
+		return true;
 	}
 	
 	private boolean inBounds(int row, int col) {
-		return false;
+		return row >= 0 && row < GRID_SIZE && col >= 0 && col < GRID_SIZE;
 	}
 	
 	private boolean validNumber(int num) {
