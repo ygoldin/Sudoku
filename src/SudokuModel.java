@@ -73,8 +73,8 @@ public class SudokuModel {
 		if(!inBounds(row, col) || !validNumber(num)) {
 			throw new IllegalArgumentException("invalid params");
 		}
-		return safeToPlaceHorizontally(row, num) || safeToPlaceVertically(col, num) || 
-				safeToPlaceWithinSquare((row/SQUARES)*SQUARES, (col/SQUARES)*SQUARES, num);
+		return board[row][col] == 0 && (safeToPlaceHorizontally(row, num) || safeToPlaceVertically(col, num) 
+				|| safeToPlaceWithinSquare((row/SQUARES)*SQUARES, (col/SQUARES)*SQUARES, num));
 	}
 	
 	//checks if the number can be placed in that row
@@ -145,7 +145,8 @@ public class SudokuModel {
 	 * @param row The row of the spot
 	 * @param col The column of the spot
 	 * @throws IllegalStateException if the game is over
-	 * @throws IllegalArgumentException if the spot is out of bounds or there is no number in that spot
+	 * @throws IllegalArgumentException if the spot is out of bounds, there is no number in that spot, or
+	 * that spot was initialized with a number at the start of the game
 	 */
 	public void remove(int row, int col) {
 		if(gameOver()) {
@@ -154,6 +155,8 @@ public class SudokuModel {
 			throw new IllegalArgumentException("invalid params");
 		} else if(board[row][col] == 0) {
 			throw new IllegalArgumentException("no number here");
+		} else if(initialSetup.get(row).get(col) != 0) {
+			throw new IllegalArgumentException("cannot remove number from initial setup");
 		}
 		board[row][col] = 0;
 		filledSpots--;
