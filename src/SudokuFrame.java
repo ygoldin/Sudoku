@@ -36,6 +36,19 @@ public class SudokuFrame extends JFrame {
 		add(numberSelectionPanel, BorderLayout.SOUTH);
 	}
 	
+	private void gameOverActions() {
+		numberSelectionGrid.unselectLastSelected();
+		if(JOptionPane.showConfirmDialog(this, "Victory!", "Play again?", JOptionPane.YES_NO_OPTION)
+				== JOptionPane.YES_OPTION) { //play again
+			sudokuModel = new SudokuModel(0);
+			for(int r = 0; r < SudokuModel.GRID_SIZE; r++) {
+				for(int c = 0; c < SudokuModel.GRID_SIZE; c++) {
+					mainGridButtons[r][c].setText(null);
+				}
+			}
+		}
+	}
+	
 	private class MainGridButton extends JButton {
 		private static final int FONT_SIZE = 40;
 		private static final String FONT_NAME = "Arial";
@@ -51,22 +64,7 @@ public class SudokuFrame extends JFrame {
 				setRolloverEnabled(false);
 			}
 			//set background with the 3x3 outer squares getting a thicker border
-			if(row == SudokuModel.SQUARES - 1 || row == SudokuModel.SQUARES*2 - 1) {
-				if(col == SudokuModel.SQUARES - 1 || col == SudokuModel.SQUARES*2 - 1) {
-					setBorder(BorderFactory.createMatteBorder(NORMAL_BORDER_WIDTH, NORMAL_BORDER_WIDTH,
-							SQUARE_BOUNDARY_BORDER_WIDTH, SQUARE_BOUNDARY_BORDER_WIDTH, Color.BLACK));
-				} else {
-					setBorder(BorderFactory.createMatteBorder(NORMAL_BORDER_WIDTH, NORMAL_BORDER_WIDTH,
-							SQUARE_BOUNDARY_BORDER_WIDTH, NORMAL_BORDER_WIDTH, Color.BLACK));
-				}
-				
-			} else if(col == SudokuModel.SQUARES - 1 || col == SudokuModel.SQUARES*2 - 1) {
-				setBorder(BorderFactory.createMatteBorder(NORMAL_BORDER_WIDTH, NORMAL_BORDER_WIDTH,
-						NORMAL_BORDER_WIDTH, SQUARE_BOUNDARY_BORDER_WIDTH, Color.BLACK));
-			} else {
-				setBorder(BorderFactory.createMatteBorder(NORMAL_BORDER_WIDTH, NORMAL_BORDER_WIDTH,
-						NORMAL_BORDER_WIDTH, NORMAL_BORDER_WIDTH, Color.BLACK));
-			}
+			setBorder(row, col);
 			//action listener for setting values in buttons
 			addActionListener(e -> {
 				if(!sudokuModel.gameOver() && initialValue == 0) { //only change noninitial values
@@ -85,13 +83,36 @@ public class SudokuFrame extends JFrame {
 						if(sudokuModel.safeToPlace(row, col, valueToPlace)) {
 							sudokuModel.place(row, col, valueToPlace);
 							setForeground(GAME_COLORS[0]);
+							setText("" + valueToPlace);
+							if(sudokuModel.gameOver()) {
+								gameOverActions();
+							}
 						} else {
 							setForeground(GAME_COLORS[1]);
+							setText("" + valueToPlace);
 						}
-						setText("" + valueToPlace);
 					}
 				}
 			});
+		}
+		
+		private void setBorder(int row, int col) {
+			if(row == SudokuModel.SQUARES - 1 || row == SudokuModel.SQUARES*2 - 1) {
+				if(col == SudokuModel.SQUARES - 1 || col == SudokuModel.SQUARES*2 - 1) {
+					setBorder(BorderFactory.createMatteBorder(NORMAL_BORDER_WIDTH, NORMAL_BORDER_WIDTH,
+							SQUARE_BOUNDARY_BORDER_WIDTH, SQUARE_BOUNDARY_BORDER_WIDTH, Color.BLACK));
+				} else {
+					setBorder(BorderFactory.createMatteBorder(NORMAL_BORDER_WIDTH, NORMAL_BORDER_WIDTH,
+							SQUARE_BOUNDARY_BORDER_WIDTH, NORMAL_BORDER_WIDTH, Color.BLACK));
+				}
+				
+			} else if(col == SudokuModel.SQUARES - 1 || col == SudokuModel.SQUARES*2 - 1) {
+				setBorder(BorderFactory.createMatteBorder(NORMAL_BORDER_WIDTH, NORMAL_BORDER_WIDTH,
+						NORMAL_BORDER_WIDTH, SQUARE_BOUNDARY_BORDER_WIDTH, Color.BLACK));
+			} else {
+				setBorder(BorderFactory.createMatteBorder(NORMAL_BORDER_WIDTH, NORMAL_BORDER_WIDTH,
+						NORMAL_BORDER_WIDTH, NORMAL_BORDER_WIDTH, Color.BLACK));
+			}
 		}
 	}
 	
@@ -110,6 +131,11 @@ public class SudokuFrame extends JFrame {
 			}
 		}
 		
+		public void unselectLastSelected() {
+			assert(lastSelected != null);
+			numberSelections[lastSelected[0]][lastSelected[1]].deselect();
+		}
+		
 		private class NumberSelection extends JButton {
 			public int value;
 			private final Color UNSELECTED = Color.WHITE;
@@ -123,10 +149,9 @@ public class SudokuFrame extends JFrame {
 				addActionListener(e -> {
 					if(lastSelected != null) {
 						if(lastSelected[0] == row && lastSelected[1] == col) { //unselect this button
-							setBackground(UNSELECTED);
-							lastSelected = null;
+							deselect();
 						} else { //unselect another and select this
-							numberSelections[lastSelected[0]][lastSelected[1]].setBackground(UNSELECTED);
+							unselectLastSelected();
 							setBackground(SELECTED);
 							lastSelected = new int[] {row, col};
 						}
@@ -135,6 +160,11 @@ public class SudokuFrame extends JFrame {
 						lastSelected = new int[] {row, col};
 					}
 				});
+			}
+			
+			public void deselect() {
+				setBackground(UNSELECTED);
+				lastSelected = null;
 			}
 		}
 	}
