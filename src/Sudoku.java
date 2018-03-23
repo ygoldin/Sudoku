@@ -1,5 +1,3 @@
-package Sudoku;
-
 import java.util.Scanner;
 import java.awt.*;
 

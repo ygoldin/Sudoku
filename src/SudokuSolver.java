@@ -1,5 +1,3 @@
-package Sudoku;
-
 public class SudokuSolver {
     
     private int[][] board;
