@@ -149,7 +149,7 @@ public class SudokuModel {
 	
 	//returns if the number is valid (1-9)
 	private boolean validNumber(int num) {
-		return num < SMALLEST_NUMBER || num > HIGHEST_NUMBER;
+		return num >= SMALLEST_NUMBER && num <= HIGHEST_NUMBER;
 	}
 	
 	/**
