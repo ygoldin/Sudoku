@@ -84,14 +84,7 @@ public class SudokuFrame extends JFrame {
 		pickDifficulty();
 		for(int r = 0; r < SudokuModel.GRID_SIZE; r++) {
 			for(int c = 0; c < SudokuModel.GRID_SIZE; c++) {
-				int initialValue = sudokuModel.initialSetup().get(r).get(c);
-				if(initialValue != 0) {
-					mainGridButtons[r][c].setForeground(Color.BLACK);
-					mainGridButtons[r][c].setText("" + initialValue);
-					mainGridButtons[r][c].setRolloverEnabled(false);
-				} else {
-					mainGridButtons[r][c].setText(null);
-				}
+				mainGridButtons[r][c].setInitialValueVisible();
 			}
 		}
 	}
@@ -152,8 +145,11 @@ public class SudokuFrame extends JFrame {
 		public void setInitialValueVisible() {
 			initialValue = sudokuModel.initialSetup().get(row).get(col);
 			if(initialValue != 0) {
+				setForeground(Color.BLACK);
 				setText("" + initialValue);
 				setRolloverEnabled(false);
+			} else {
+				setText(null);
 			}
 		}
 		
