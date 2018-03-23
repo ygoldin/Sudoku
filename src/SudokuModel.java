@@ -70,14 +70,19 @@ public class SudokuModel {
 	}
 	
 	public void place(int row, int col, int num) {
-		if(!safeToPlace(row, col, num)) {
+		if(gameOver()) {
+			throw new IllegalStateException("game is over");
+		} else if(!safeToPlace(row, col, num)) {
 			throw new IllegalArgumentException("not safe to place");
 		}
+		board[row][col] = num;
 		filledPanels++;
 	}
 	
 	public void remove(int row, int col) {
-		if(!inBounds(row, col)) {
+		if(gameOver()) {
+			throw new IllegalStateException("game is over");
+		} else if(!inBounds(row, col)) {
 			throw new IllegalArgumentException("invalid params");
 		} else if(board[row][col] == 0) {
 			throw new IllegalArgumentException("no number here");
