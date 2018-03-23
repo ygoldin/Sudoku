@@ -3,11 +3,10 @@
  * @author Yael Goldin
  */
 public class SudokuSolver {
-	private SudokuModel model;
-	private boolean alreadySolved;
+	public SudokuModel model;
 	
 	/**
-	 * creates a solver over the given model (NOTE: 'model' will not be altered)
+	 * creates a solver over the given model (NOTE: 'model' parameter will not be altered)
 	 * @param model The model to solve
 	 */
 	public SudokuSolver(SudokuModel model) {
@@ -16,17 +15,9 @@ public class SudokuSolver {
 	
 	/**
 	 * solves the sudoku board
-	 * 
-	 * @return The solved model
-	 * @throws IllegalStateException if the model has already been solved
 	 */
-	public SudokuModel solve() {
-		if(alreadySolved) {
-			throw new IllegalStateException("already solved");
-		}
+	public void solve() {
 		solve(0, 0);
-		alreadySolved = true;
-		return model;
 	}
 	
 	//uses recursive backtracking to attempt every move
