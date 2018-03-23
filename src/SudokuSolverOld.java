@@ -1,4 +1,4 @@
-public class SudokuSolver {
+public class SudokuSolverOld {
     
     private int[][] board;
     private boolean[][] lookedAt;
@@ -6,7 +6,7 @@ public class SudokuSolver {
     //creates a SudokuSolver from the array that represents a Sudoku board
     //if the board is not 9x9, throws IllegalArgumentException
     //assumes all values in the board are valid for a normal Sudoku game
-    public SudokuSolver(int[][] board){
+    public SudokuSolverOld(int[][] board){
         if(board.length != 9 || board[0].length != 9){
             throw new IllegalArgumentException("Invalid board size");
         }
