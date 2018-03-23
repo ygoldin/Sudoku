@@ -49,8 +49,6 @@ public class SudokuFrame extends JFrame {
 			if(initialValue != 0) {
 				setText("" + initialValue);
 				setRolloverEnabled(false);
-			} else {
-				setForeground(GAME_COLORS[0]);
 			}
 			//set background with the 3x3 outer squares getting a thicker border
 			if(row == SudokuModel.SQUARES - 1 || row == SudokuModel.SQUARES*2 - 1) {
@@ -71,14 +69,17 @@ public class SudokuFrame extends JFrame {
 			}
 			//action listener for setting values in buttons
 			addActionListener(e -> {
-				if(!sudokuModel.gameOver()) {
+				if(!sudokuModel.gameOver() && initialValue == 0) { //only change noninitial values
 					int[] lastSelectedNumber = numberSelectionGrid.lastSelected;
 					if(lastSelectedNumber == null) { //remove
-						if(initialValue == 0 && sudokuModel.spotFilled(row, col)) {
+						if(sudokuModel.spotFilled(row, col)) {
 							sudokuModel.remove(row, col);
 						}
 						setText(null);
 					} else { //place
+						if(sudokuModel.spotFilled(row, col)) {
+							sudokuModel.remove(row, col);
+						}
 						int valueToPlace = numberSelectionGrid.numberSelections[lastSelectedNumber[0]]
 								[lastSelectedNumber[1]].value;
 						if(sudokuModel.safeToPlace(row, col, valueToPlace)) {
