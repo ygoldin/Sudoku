@@ -1,9 +1,13 @@
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 /**
  * SudokuModel can be used to model a game of Sudoku
  * @author Yael Goldin
  */
 public class SudokuModel {
 	private int[][] board;
+	private List<List<Integer>> initialSetup;
 	private int filledSpots;
 	private static final String[] INITIAL_BOARD_BY_DIFFICULTY =
 		{"805714000102000038000030007764180000000260780008000500451678309080050600003001005",
@@ -29,11 +33,27 @@ public class SudokuModel {
 			throw new IllegalArgumentException("invalid difficulty level");
 		}
 		board = new int[GRID_SIZE][GRID_SIZE];
+		initialSetup = new ArrayList<List<Integer>>(GRID_SIZE);
 		for(int r = 0; r < board.length; r++) {
+			List<Integer> row = new ArrayList<Integer>(GRID_SIZE);
 			for(int c = 0; c < board[0].length; c++) {
-				board[r][c] = INITIAL_BOARD_BY_DIFFICULTY[difficulty].charAt(r*board.length + c) - '0';
+				int cur = INITIAL_BOARD_BY_DIFFICULTY[difficulty].charAt(r*board.length + c) - '0';
+				board[r][c] = cur;
+				row.add(cur);
 			}
+			initialSetup.add(Collections.unmodifiableList(row));
 		}
+	}
+	
+	/**
+	 * returns the original board setup
+	 * 
+	 * @return an unmodifiable list representing the setup of the board at the start of the game
+	 * every interior list represents a row, and every value in that list represents the number at
+	 * that column in the row
+	 */
+	public List<List<Integer>> initialSetup() {
+		return Collections.unmodifiableList(initialSetup);
 	}
 	
 	/**
