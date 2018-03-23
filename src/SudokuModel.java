@@ -40,6 +40,9 @@ public class SudokuModel {
 				int cur = INITIAL_BOARD_BY_DIFFICULTY[difficulty].charAt(r*board.length + c) - '0';
 				board[r][c] = cur;
 				row.add(cur);
+				if(cur != 0) {
+					filledSpots++;
+				}
 			}
 			initialSetup.add(Collections.unmodifiableList(row));
 		}
