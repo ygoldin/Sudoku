@@ -32,7 +32,7 @@ public class SudokuFrame extends JFrame {
 		JPanel numberSelectionPanel = new JPanel();
 		numberSelectionPanel.setLayout(new GridLayout(SudokuModel.SQUARES, SudokuModel.SQUARES));
 		numberSelectionGrid = new NumberSelectionGrid(numberSelectionPanel);
-		add(numberSelectionPanel);
+		add(numberSelectionPanel, BorderLayout.SOUTH);
 	}
 	
 	private class MainGridButton extends JButton {
