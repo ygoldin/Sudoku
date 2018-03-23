@@ -12,13 +12,16 @@ public class SudokuFrame extends JFrame {
 	private NumberSelectionGrid numberSelectionGrid;
 	private JButton help;
 	private static final Color[] GAME_COLORS = {Color.BLUE, Color.RED};
+	private static final String[] DIFFICULTIES = {"EASY", "MEDIUM", "HARD", "EXPERT"};
+	private static final int DEFAULT_DIFFICULTY = 0;
 	
 	public SudokuFrame() {
 		super();
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setMinimumSize(new Dimension(1024, 768));
 		setTitle("Sudoku");
-		sudokuModel = new SudokuModel(0);
+		
+		
 		
 		JPanel mainGridButtonPanel = new JPanel();
 		mainGridButtonPanel.setLayout(new GridLayout(SudokuModel.GRID_SIZE, SudokuModel.GRID_SIZE));
@@ -48,6 +51,22 @@ public class SudokuFrame extends JFrame {
 			message += " and click on the square";
 			JOptionPane.showMessageDialog(this, message);
 		});
+		
+		pack();
+		setVisible(true);
+		
+		int response = JOptionPane.showOptionDialog(this, "Choose a difficulty:", "Difficulty Selection",
+				JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE, null, DIFFICULTIES, 
+				DIFFICULTIES[DEFAULT_DIFFICULTY]);
+		if(response < 0) {
+			response = DEFAULT_DIFFICULTY;
+		}
+		sudokuModel = new SudokuModel(response);
+		for(int r = 0; r < SudokuModel.GRID_SIZE; r++) {
+			for(int c = 0; c < SudokuModel.GRID_SIZE; c++) {
+				mainGridButtons[r][c].setInitialValueVisible();
+			}
+		}
 	}
 	
 	private void gameOverActions() {
@@ -74,15 +93,14 @@ public class SudokuFrame extends JFrame {
 		private static final String FONT_NAME = "Arial";
 		private static final int SQUARE_BOUNDARY_BORDER_WIDTH = 4;
 		private static final int NORMAL_BORDER_WIDTH = 1;
+		private int initialValue;
+		private int row;
+		private int col;
 		
 		public MainGridButton(int row, int col) {
+			this.row = row;
+			this.col = col;
 			setFont(new Font(FONT_NAME, Font.PLAIN, FONT_SIZE));
-			//set initial value if it's part of the game's initial setup
-			int initialValue = sudokuModel.initialSetup().get(row).get(col);
-			if(initialValue != 0) {
-				setText("" + initialValue);
-				setRolloverEnabled(false);
-			}
 			//set background with the 3x3 outer squares getting a thicker border
 			setBorder(row, col);
 			//action listener for setting values in buttons
@@ -114,6 +132,14 @@ public class SudokuFrame extends JFrame {
 					}
 				}
 			});
+		}
+		
+		public void setInitialValueVisible() {
+			initialValue = sudokuModel.initialSetup().get(row).get(col);
+			if(initialValue != 0) {
+				setText("" + initialValue);
+				setRolloverEnabled(false);
+			}
 		}
 		
 		private void setBorder(int row, int col) {
