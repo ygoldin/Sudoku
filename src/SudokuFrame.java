@@ -10,9 +10,10 @@ public class SudokuFrame extends JFrame {
 	private SudokuModel sudokuModel;
 	private MainGridButton[][] mainGridButtons;
 	private NumberSelectionGrid numberSelectionGrid;
-	private Color[] GAME_COLORS = {Color.BLUE};
+	private Color[] GAME_COLORS = {Color.BLUE, Color.RED};
 	
 	public SudokuFrame() {
+		super();
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setMinimumSize(new Dimension(1024, 768));
 		setTitle("Sudoku");
@@ -42,13 +43,16 @@ public class SudokuFrame extends JFrame {
 		private static final int NORMAL_BORDER_WIDTH = 1;
 		
 		public MainGridButton(int row, int col) {
-			int value = sudokuModel.initialSetup().get(row).get(col);
-			if(value != 0) {
-				setText("" + value);
+			setFont(new Font(FONT_NAME, Font.PLAIN, FONT_SIZE));
+			//set initial value if it's part of the game's initial setup
+			int initialValue = sudokuModel.initialSetup().get(row).get(col);
+			if(initialValue != 0) {
+				setText("" + initialValue);
 				setRolloverEnabled(false);
 			} else {
 				setForeground(GAME_COLORS[0]);
 			}
+			//set background with the 3x3 outer squares getting a thicker border
 			if(row == SudokuModel.SQUARES - 1 || row == SudokuModel.SQUARES*2 - 1) {
 				if(col == SudokuModel.SQUARES - 1 || col == SudokuModel.SQUARES*2 - 1) {
 					setBorder(BorderFactory.createMatteBorder(NORMAL_BORDER_WIDTH, NORMAL_BORDER_WIDTH,
@@ -65,15 +69,37 @@ public class SudokuFrame extends JFrame {
 				setBorder(BorderFactory.createMatteBorder(NORMAL_BORDER_WIDTH, NORMAL_BORDER_WIDTH,
 						NORMAL_BORDER_WIDTH, NORMAL_BORDER_WIDTH, Color.BLACK));
 			}
-			setFont(new Font(FONT_NAME, Font.PLAIN, FONT_SIZE));
+			//action listener for setting values in buttons
+			addActionListener(e -> {
+				if(!sudokuModel.gameOver()) {
+					int[] lastSelectedNumber = numberSelectionGrid.lastSelected;
+					if(lastSelectedNumber == null) { //remove
+						if(initialValue == 0 && sudokuModel.spotFilled(row, col)) {
+							sudokuModel.remove(row, col);
+						}
+						setText(null);
+					} else { //place
+						int valueToPlace = numberSelectionGrid.numberSelections[lastSelectedNumber[0]]
+								[lastSelectedNumber[1]].value;
+						if(sudokuModel.safeToPlace(row, col, valueToPlace)) {
+							sudokuModel.place(row, col, valueToPlace);
+							setForeground(GAME_COLORS[0]);
+						} else {
+							setForeground(GAME_COLORS[1]);
+						}
+						setText("" + valueToPlace);
+					}
+				}
+			});
 		}
 	}
 	
 	private class NumberSelectionGrid extends JComponent {
 		public int[] lastSelected;
-		private NumberSelection[][] numberSelections;
+		public NumberSelection[][] numberSelections;
 		
 		public NumberSelectionGrid(JPanel numberSelectionPanel) {
+			super();
 			numberSelections = new NumberSelection[SudokuModel.SQUARES][SudokuModel.SQUARES];
 			for(int r = 0; r < SudokuModel.SQUARES; r++) {
 				for(int c = 0; c < SudokuModel.SQUARES; c++) {
@@ -84,11 +110,14 @@ public class SudokuFrame extends JFrame {
 		}
 		
 		private class NumberSelection extends JButton {
+			public int value;
 			private final Color UNSELECTED = Color.WHITE;
 			private final Color SELECTED = Color.GREEN;
 			
 			public NumberSelection(int row, int col) {
-				setText("" + (row*SudokuModel.SQUARES + col + 1));
+				super();
+				value = row*SudokuModel.SQUARES + col + 1;
+				setText("" + value);
 				setBackground(UNSELECTED);
 				addActionListener(e -> {
 					if(lastSelected != null) {
