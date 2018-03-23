@@ -1,29 +1,51 @@
-
+/**
+ * SudokuModel can be used to model a game of Sudoku
+ * @author Yael Goldin
+ */
 public class SudokuModel {
-	private static final String[] DIFFICULTIES = {"80571400010200003800003000776418000000026078"
-            + "0008000500451678309080050600003001005", "0000200800300005000567080000800060001050008"
-            + "03000090020000450039020007000700000040", "000078005000400060706009000002300050910000700"
-            + "000080203090030000005000009000100080", "0042900707000000000000100900300000894076001"
-            + "00050038000500003602000002001006000000"};
 	private int[][] board;
-	private int filledPanels;
+	private int filledSpots;
+	private static final String[] INITIAL_BOARD_BY_DIFFICULTY =
+		{"805714000102000038000030007764180000000260780008000500451678309080050600003001005",
+		"000020080030000500056708000080006000105000803000090020000450039020007000700000040",
+		"000078005000400060706009000002300050910000700000080203090030000005000009000100080",
+		"004290070700000000000010090030000089407600100050038000500003602000002001006000000"};
 	
 	public static final int SQUARES = 3;
 	public static final int GRID_SIZE = SQUARES*SQUARES;
-	public static final int HIGHEST_DIFFICULTY = DIFFICULTIES.length - 1;
+	public static final int HIGHEST_DIFFICULTY = INITIAL_BOARD_BY_DIFFICULTY.length - 1;
+	public static final int SMALLEST_NUMBER = 1;
+	public static final int HIGHEST_NUMBER = 9;
 	
+	/**
+	 * initializes the game with a board of the given difficulty
+	 * 
+	 * @param difficulty The level of difficulty desired (higher number -> higher difficulty)
+	 * @throws IllegalArgumentException if 'difficulty' is not in the range [0, HIGHEST_DIFFICULTY]
+	 * inclusive
+	 */
 	public SudokuModel(int difficulty) {
-		if(difficulty < 0 || difficulty >= DIFFICULTIES.length) {
+		if(difficulty < 0 || difficulty > HIGHEST_DIFFICULTY) {
 			throw new IllegalArgumentException("invalid difficulty level");
 		}
 		board = new int[GRID_SIZE][GRID_SIZE];
 		for(int r = 0; r < board.length; r++) {
 			for(int c = 0; c < board[0].length; c++) {
-				board[r][c] = DIFFICULTIES[difficulty].charAt(r*board.length + c) - '0';
+				board[r][c] = INITIAL_BOARD_BY_DIFFICULTY[difficulty].charAt(r*board.length + c) - '0';
 			}
 		}
 	}
 	
+	/**
+	 * checks whether the given number can be placed in the given spot
+	 * 
+	 * @param row The row of the spot
+	 * @param col The column of the spot
+	 * @param num The number to be placed
+	 * @return true if the number can be placed there, false if not
+	 * @throws IllegalArgumentException if the spot is out of bounds or the number is not in the range
+	 * [SMALLEST_NUMBER, HIGHEST_NUMBER] inclusive
+	 */
 	public boolean safeToPlace(int row, int col, int num) {
 		if(!inBounds(row, col) || !validNumber(num)) {
 			throw new IllegalArgumentException("invalid params");
@@ -32,6 +54,7 @@ public class SudokuModel {
 				safeToPlaceWithinSquare((row/SQUARES)*SQUARES, (col/SQUARES)*SQUARES, num);
 	}
 	
+	//checks if the number can be placed in that row
 	private boolean safeToPlaceHorizontally(int row, int num) {
 		for(int c = 0; c < GRID_SIZE; c++) {
 			if(board[row][c] == num) {
@@ -41,6 +64,7 @@ public class SudokuModel {
 		return true;
 	}
 	
+	//checks if the number can be placed in that column
 	private boolean safeToPlaceVertically(int col, int num) {
 		for(int r = 0; r < GRID_SIZE; r++) {
 			if(board[r][col] == num) {
@@ -50,6 +74,7 @@ public class SudokuModel {
 		return true;
 	}
 	
+	//checks if the number can be placed in the 3x3 square that starts at the given spot
 	private boolean safeToPlaceWithinSquare(int topLeftRow, int topLeftCol, int num) {
 		for(int r = topLeftRow; r < topLeftRow + SQUARES; r++) {
 			for(int c = topLeftCol; c < topLeftCol + SQUARES; c++) {
@@ -61,14 +86,26 @@ public class SudokuModel {
 		return true;
 	}
 	
+	//returns if the given spot is in bounds
 	private boolean inBounds(int row, int col) {
 		return row >= 0 && row < GRID_SIZE && col >= 0 && col < GRID_SIZE;
 	}
 	
+	//returns if the number is valid (1-9)
 	private boolean validNumber(int num) {
 		return num < 1 || num > GRID_SIZE;
 	}
 	
+	/**
+	 * places the given number in the given spot
+	 * 
+	 * @param row The row of the spot
+	 * @param col The column of the spot
+	 * @param num The number to be placed
+	 * @throws IllegalStateException if the game is over
+	 * @throws IllegalArgumentException if the spot is out of bounds, the number is not in the range
+	 * [SMALLEST_NUMBER, HIGHEST_NUMBER] inclusive, or it is not safe to place the number in that spot
+	 */
 	public void place(int row, int col, int num) {
 		if(gameOver()) {
 			throw new IllegalStateException("game is over");
@@ -76,9 +113,17 @@ public class SudokuModel {
 			throw new IllegalArgumentException("not safe to place");
 		}
 		board[row][col] = num;
-		filledPanels++;
+		filledSpots++;
 	}
 	
+	/**
+	 * removes any number from the given spot, making it blank
+	 * 
+	 * @param row The row of the spot
+	 * @param col The column of the spot
+	 * @throws IllegalStateException if the game is over
+	 * @throws IllegalArgumentException if the spot is out of bounds or there is no number in that spot
+	 */
 	public void remove(int row, int col) {
 		if(gameOver()) {
 			throw new IllegalStateException("game is over");
@@ -88,10 +133,15 @@ public class SudokuModel {
 			throw new IllegalArgumentException("no number here");
 		}
 		board[row][col] = 0;
-		filledPanels--;
+		filledSpots--;
 	}
 	
+	/**
+	 * checks if the game is over and the board has been filled
+	 * 
+	 * @return true if the game is over, false otherwise
+	 */
 	public boolean gameOver() {
-		return filledPanels == GRID_SIZE*GRID_SIZE;
+		return filledSpots == GRID_SIZE*GRID_SIZE;
 	}
 }
