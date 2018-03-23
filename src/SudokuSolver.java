@@ -33,11 +33,15 @@ public class SudokuSolver {
 	private void solve(int row, int col) {
 		if(model.inBounds(row, col)) {
 			int[] nextSpot = nextSpot(row, col);
-			for(int i = SudokuModel.SMALLEST_NUMBER; i <= SudokuModel.HIGHEST_NUMBER; i++) {
-				if(model.safeToPlace(row, col, i)) {
-					model.place(row, col, i);
-					solve(nextSpot[0], nextSpot[1]);
-					model.remove(row, col);
+			if(model.spotFilled(row, col)) {
+				solve(nextSpot[0], nextSpot[1]);
+			} else {
+				for(int i = SudokuModel.SMALLEST_NUMBER; i <= SudokuModel.HIGHEST_NUMBER; i++) {
+					if(model.safeToPlace(row, col, i)) {
+						model.place(row, col, i);
+						solve(nextSpot[0], nextSpot[1]);
+						model.remove(row, col);
+					}
 				}
 			}
 		}
