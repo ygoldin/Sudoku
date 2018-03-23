@@ -170,4 +170,23 @@ public class SudokuModel {
 	public boolean gameOver() {
 		return filledSpots == GRID_SIZE*GRID_SIZE;
 	}
+	
+	/**
+	 * returns the String representation of the model
+	 */
+	@Override
+	public String toString() {
+		String result = "";
+		for(int r = 0; r < GRID_SIZE; r++) {
+			result += "[" + board[r][0];
+			for(int c = 1; c < GRID_SIZE; c++) {
+				result += ", " + board[r][c];
+			}
+			result += "]";
+			if(r != GRID_SIZE - 1) {
+				result += "\n";
+			}
+		}
+		return result;
+	}
 }
