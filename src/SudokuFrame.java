@@ -86,6 +86,7 @@ public class SudokuFrame extends JFrame {
 			for(int c = 0; c < SudokuModel.GRID_SIZE; c++) {
 				int initialValue = sudokuModel.initialSetup().get(r).get(c);
 				if(initialValue != 0) {
+					mainGridButtons[r][c].setForeground(Color.BLACK);
 					mainGridButtons[r][c].setText("" + initialValue);
 					mainGridButtons[r][c].setRolloverEnabled(false);
 				} else {
@@ -192,8 +193,9 @@ public class SudokuFrame extends JFrame {
 		}
 		
 		public void unselectLastSelected() {
-			assert(lastSelected != null);
-			numberSelections[lastSelected[0]][lastSelected[1]].deselect();
+			if(lastSelected != null) {
+				numberSelections[lastSelected[0]][lastSelected[1]].deselect();
+			}
 		}
 		
 		private class NumberSelection extends JButton {
