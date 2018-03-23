@@ -48,6 +48,18 @@ public class SudokuModel {
 		}
 	}
 	
+	//a private constructor used to copy the model
+	private SudokuModel(SudokuModel original) {
+		board = new int[GRID_SIZE][GRID_SIZE];
+		initialSetup = Collections.unmodifiableList(original.initialSetup);
+		filledSpots = original.filledSpots;
+		for(int r = 0; r < GRID_SIZE; r++) {
+			for(int c = 0; c < GRID_SIZE; c++) {
+				board[r][c] = original.board[r][c];
+			}
+		}
+	}
+	
 	/**
 	 * returns the original board setup
 	 * 
@@ -190,6 +202,16 @@ public class SudokuModel {
 	 */
 	public boolean gameOver() {
 		return filledSpots == GRID_SIZE*GRID_SIZE;
+	}
+	
+	/**
+	 * creates a copy of the current model. The initial setup of the copy will be the initial setup of
+	 * the current model, not the state of the model at the time of copying
+	 * 
+	 * @return the copy of the model
+	 */
+	public SudokuModel copy() {
+		return new SudokuModel(this);
 	}
 	
 	/**
