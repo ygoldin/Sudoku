@@ -11,6 +11,7 @@ public class SudokuFrame extends JFrame {
 	private MainGridButton[][] mainGridButtons;
 	private NumberSelectionGrid numberSelectionGrid;
 	private JButton help;
+	private JButton newGame;
 	private static final Color[] GAME_COLORS = {Color.BLUE, Color.RED};
 	private static final String[] DIFFICULTIES = {"EASY", "MEDIUM", "HARD", "EXPERT"};
 	private static final int DEFAULT_DIFFICULTY = 0;
@@ -51,17 +52,16 @@ public class SudokuFrame extends JFrame {
 			message += " and click on the square";
 			JOptionPane.showMessageDialog(this, message);
 		});
+		newGame = new JButton("New Game");
+		menu.add(newGame);
+		newGame.addActionListener(e -> {
+			newGame();
+		});
 		
 		pack();
 		setVisible(true);
 		
-		int response = JOptionPane.showOptionDialog(this, "Choose a difficulty:", "Difficulty Selection",
-				JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE, null, DIFFICULTIES, 
-				DIFFICULTIES[DEFAULT_DIFFICULTY]);
-		if(response < 0) {
-			response = DEFAULT_DIFFICULTY;
-		}
-		sudokuModel = new SudokuModel(response);
+		pickDifficulty();
 		for(int r = 0; r < SudokuModel.GRID_SIZE; r++) {
 			for(int c = 0; c < SudokuModel.GRID_SIZE; c++) {
 				mainGridButtons[r][c].setInitialValueVisible();
@@ -69,22 +69,36 @@ public class SudokuFrame extends JFrame {
 		}
 	}
 	
-	private void gameOverActions() {
+	private void pickDifficulty() {
+		int response = JOptionPane.showOptionDialog(this, "Choose a difficulty:", "Difficulty Selection",
+				JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE, null, DIFFICULTIES, 
+				DIFFICULTIES[DEFAULT_DIFFICULTY]);
+		if(response < 0) {
+			response = DEFAULT_DIFFICULTY;
+		}
+		sudokuModel = new SudokuModel(response);
+	}
+	
+	private void newGame() {
 		numberSelectionGrid.unselectLastSelected();
-		if(JOptionPane.showConfirmDialog(this, "Victory!", "Play again?", JOptionPane.YES_NO_OPTION)
-				== JOptionPane.YES_OPTION) { //play again
-			sudokuModel = new SudokuModel(0);
-			for(int r = 0; r < SudokuModel.GRID_SIZE; r++) {
-				for(int c = 0; c < SudokuModel.GRID_SIZE; c++) {
-					int initialValue = sudokuModel.initialSetup().get(r).get(c);
-					if(initialValue != 0) {
-						mainGridButtons[r][c].setText("" + initialValue);
-						mainGridButtons[r][c].setRolloverEnabled(false);
-					} else {
-						mainGridButtons[r][c].setText(null);
-					}
+		pickDifficulty();
+		for(int r = 0; r < SudokuModel.GRID_SIZE; r++) {
+			for(int c = 0; c < SudokuModel.GRID_SIZE; c++) {
+				int initialValue = sudokuModel.initialSetup().get(r).get(c);
+				if(initialValue != 0) {
+					mainGridButtons[r][c].setText("" + initialValue);
+					mainGridButtons[r][c].setRolloverEnabled(false);
+				} else {
+					mainGridButtons[r][c].setText(null);
 				}
 			}
+		}
+	}
+	
+	private void gameOverActions() {
+		if(JOptionPane.showConfirmDialog(this, "Victory!", "Play again?", JOptionPane.YES_NO_OPTION)
+				== JOptionPane.YES_OPTION) { //play again
+			newGame();
 		}
 	}
 	
