@@ -50,7 +50,7 @@ public class SudokuFrame extends JFrame {
 			message += "Numbers that were legally placed show up blue, illegal ones show up red\n";
 			message += "To remove a number from a square, have no number in the bottom grid selected";
 			message += " and click on the square";
-			JOptionPane.showMessageDialog(this, message);
+			JOptionPane.showMessageDialog(this, message, "Game Rules", JOptionPane.INFORMATION_MESSAGE);
 		});
 		newGame = new JButton("New Game");
 		menu.add(newGame);
