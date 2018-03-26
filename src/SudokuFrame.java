@@ -16,13 +16,14 @@ public class SudokuFrame extends JFrame {
 	private static final String[] DIFFICULTIES = {"EASY", "MEDIUM", "HARD", "EXPERT"};
 	private static final int DEFAULT_DIFFICULTY = 0;
 	
+	/**
+	 * initializes the frame
+	 */
 	public SudokuFrame() {
 		super();
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setMinimumSize(new Dimension(1024, 768));
-		setTitle("Sudoku");
-		
-		
+		setTitle("Sudoku");		
 		
 		JPanel mainGridButtonPanel = new JPanel();
 		mainGridButtonPanel.setLayout(new GridLayout(SudokuModel.GRID_SIZE, SudokuModel.GRID_SIZE));
@@ -40,6 +41,20 @@ public class SudokuFrame extends JFrame {
 		numberSelectionGrid = new NumberSelectionGrid(numberSelectionPanel);
 		add(numberSelectionPanel, BorderLayout.SOUTH);
 		
+		setupMenu();		
+		pack();
+		setVisible(true);
+		
+		pickDifficulty();
+		for(int r = 0; r < SudokuModel.GRID_SIZE; r++) {
+			for(int c = 0; c < SudokuModel.GRID_SIZE; c++) {
+				mainGridButtons[r][c].setInitialValueVisible();
+			}
+		}
+	}
+	
+	//sets up the menu bar (help/new game buttons)
+	private void setupMenu() {
 		JMenuBar menu = new JMenuBar();
 		setJMenuBar(menu);
 		help = new JButton("Help");
@@ -57,18 +72,9 @@ public class SudokuFrame extends JFrame {
 		newGame.addActionListener(e -> {
 			newGame();
 		});
-		
-		pack();
-		setVisible(true);
-		
-		pickDifficulty();
-		for(int r = 0; r < SudokuModel.GRID_SIZE; r++) {
-			for(int c = 0; c < SudokuModel.GRID_SIZE; c++) {
-				mainGridButtons[r][c].setInitialValueVisible();
-			}
-		}
 	}
 	
+	//lets the user pick a difficulty
 	private void pickDifficulty() {
 		int response = JOptionPane.showOptionDialog(this, "Choose a difficulty:", "Difficulty Selection",
 				JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE, null, DIFFICULTIES, 
@@ -79,6 +85,7 @@ public class SudokuFrame extends JFrame {
 		sudokuModel = new SudokuModel(response);
 	}
 	
+	//sets up a new game
 	private void newGame() {
 		numberSelectionGrid.unselectLastSelected();
 		pickDifficulty();
@@ -89,6 +96,7 @@ public class SudokuFrame extends JFrame {
 		}
 	}
 	
+	//asks the user to play again
 	private void gameOverActions() {
 		if(JOptionPane.showConfirmDialog(this, "Victory!", "Play again?", JOptionPane.YES_NO_OPTION)
 				== JOptionPane.YES_OPTION) { //play again
@@ -96,6 +104,7 @@ public class SudokuFrame extends JFrame {
 		}
 	}
 	
+	//this class represents a button in the main 9x9 grid
 	private class MainGridButton extends JButton {
 		private static final int FONT_SIZE = 40;
 		private static final String FONT_NAME = "Arial";
@@ -105,6 +114,12 @@ public class SudokuFrame extends JFrame {
 		private int row;
 		private int col;
 		
+		/**
+		 * constructs a button representing the given spot in the model
+		 * 
+		 * @param row The row of the spot
+		 * @param col The column of the spot
+		 */
 		public MainGridButton(int row, int col) {
 			this.row = row;
 			this.col = col;
@@ -141,6 +156,7 @@ public class SudokuFrame extends JFrame {
 				}
 			});
 		}
+		
 		
 		public void setInitialValueVisible() {
 			initialValue = sudokuModel.initialSetup().get(row).get(col);
